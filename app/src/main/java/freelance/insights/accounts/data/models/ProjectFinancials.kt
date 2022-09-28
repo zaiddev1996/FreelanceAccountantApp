@@ -10,11 +10,12 @@ import kotlinx.parcelize.Parcelize
 data class ProjectFinancials(
     var name: String = "",
     var clientName: String = "",
-    var projectStart: Int? = null,
-    var budget: Int? = null,
+    var projectStart: String? = null,
+    var projectEnd: String? = null,
+    var budget: Long? = null,
     var viaPlatform: String = "",
-    var outsourcingBudget: Int? = null,
-    var tip: Int? = null
+    var outsourcingBudget: Long? = null,
+    var tip: Long? = null
 ) {
 
     @PrimaryKey(autoGenerate = true)

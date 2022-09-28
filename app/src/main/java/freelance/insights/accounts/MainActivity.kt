@@ -4,11 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -41,7 +40,9 @@ fun AccountantApp() {
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
 
+        val snackBarHostState = remember { SnackbarHostState() }
         Scaffold(
+            scaffoldState = rememberScaffoldState(snackbarHostState = snackBarHostState),
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { navController.navigateSingleTopTo(AddProject.route) }
@@ -61,7 +62,8 @@ fun AccountantApp() {
         ) { innerPadding ->
             AppNavHost(
                 navHostController = navController,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
+                snackBarHostState = snackBarHostState
             )
 
         }
