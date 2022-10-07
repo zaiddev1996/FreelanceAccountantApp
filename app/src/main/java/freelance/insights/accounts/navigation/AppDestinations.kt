@@ -25,7 +25,7 @@ object Activity : AppDestination {
     override val title = "activity"
 }
 
-//object SingleAccount : RallyDestination {
+//object SingleAccount : AppDestination {
 //    // Added for simplicity, this icon will not in fact be used, as SingleAccount isn't
 //    // part of the RallyTabRow selection
 //    override val icon = Icons.Filled.Money

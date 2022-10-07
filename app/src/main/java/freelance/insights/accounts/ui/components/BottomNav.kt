@@ -1,9 +1,13 @@
 package freelance.insights.accounts.ui.components
 
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import freelance.insights.accounts.R
 import freelance.insights.accounts.navigation.Activity
@@ -22,12 +26,15 @@ fun BottomNav(
         NavigationItem.BottomNavProfile
     )
     BottomNavigation(
-        backgroundColor = Purple200,
-        contentColor = Color.White
+        backgroundColor = MaterialTheme.colors.background,
+        contentColor = MaterialTheme.colors.onSurface,
+        elevation = 20.dp,
+        modifier = Modifier.height(70.dp)
     ) {
 
         items.forEach { item ->
             BottomNavigationItem(
+                modifier = Modifier.padding(bottom = 10.dp),
                 icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
                 label = { Text(text = item.title) },
                 selectedContentColor = Color.White,

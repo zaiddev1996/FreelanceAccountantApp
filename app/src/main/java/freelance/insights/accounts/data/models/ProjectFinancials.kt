@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 
 @Entity(tableName = "Projects")
+@Parcelize
 data class ProjectFinancials(
     var name: String = "",
     var clientName: String = "",
@@ -16,7 +17,7 @@ data class ProjectFinancials(
     var viaPlatform: String = "",
     var outsourcingBudget: Long? = null,
     var tip: Long? = null
-) {
+): Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0

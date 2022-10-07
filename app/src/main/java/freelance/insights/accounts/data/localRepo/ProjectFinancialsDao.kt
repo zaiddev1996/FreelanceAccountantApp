@@ -16,7 +16,10 @@ interface ProjectFinancialsDao {
     fun getAll(): List<ProjectFinancials>
 
     @Insert
-    fun insertAll(vararg logs: ProjectFinancials)
+    fun insertAll(vararg project: ProjectFinancials)
+
+    @Insert
+    fun insertSingle(project: ProjectFinancials): Long
 
     @Query("DELETE FROM projects")
     fun nukeTable()

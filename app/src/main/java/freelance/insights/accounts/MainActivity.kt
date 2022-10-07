@@ -1,9 +1,14 @@
 package freelance.insights.accounts
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Resources.Theme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,11 +19,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import freelance.insights.accounts.navigation.AddProject
-import freelance.insights.accounts.navigation.AppNavHost
-import freelance.insights.accounts.navigation.navigateSingleTopTo
+import freelance.insights.accounts.navigation.*
 import freelance.insights.accounts.ui.components.BottomNav
 import freelance.insights.accounts.ui.theme.AccountantAppTheme
+import freelance.insights.accounts.ui.theme.DarkColorPalette
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -45,7 +49,8 @@ fun AccountantApp() {
             scaffoldState = rememberScaffoldState(snackbarHostState = snackBarHostState),
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { navController.navigateSingleTopTo(AddProject.route) }
+                    onClick = { navController.navigateTo(AddProject.route) },
+                    backgroundColor = MaterialTheme.colors.primary
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_add_24),

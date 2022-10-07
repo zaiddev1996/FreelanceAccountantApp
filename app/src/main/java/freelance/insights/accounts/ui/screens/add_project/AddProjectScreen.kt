@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -16,61 +15,65 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import freelance.insights.accounts.data.models.ProjectFinancials
 import freelance.insights.accounts.ui.components.AppSingleLineInput
+import freelance.insights.accounts.ui.components.CircularIndeterminateProgressBar
 import freelance.insights.accounts.utils.showDateDialog
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddProjectScreen(
     scaffoldState: SnackbarHostState,
-    viewModel: AddProjectViewModel = hiltViewModel()
+    viewModel: AddProjectViewModel = hiltViewModel(),
+    onAddSuccess: () -> Unit
 ) {
-    val newProject = rememberSaveable {
-        mutableStateOf(
-            ProjectFinancials(),
-            policy = neverEqualPolicy()
-        )
-    }
+
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val newProject = viewModel.project
 
     LaunchedEffect(key1 = Unit) {
         viewModel.oneTimeEvents.collectLatest {
             when (it) {
-                is AddProjectEvents.ShowSnackBar -> {
-                    coroutineScope.launch {
+                is AddProjectState.ShowSnackBar -> {
+                    GlobalScope.launch {
                         scaffoldState.showSnackbar(
                             message = it.message
                         )
                     }
                 }
 
-                is AddProjectEvents.NavigateToHome -> {
-
+                is AddProjectState.NavigateToHome -> {
+                    onAddSuccess()
                 }
             }
         }
     }
 
-    Column {
+    val t = Column(modifier = Modifier.padding(5.dp)) {
         AppSingleLineInput(
             placeHolder = "Name",
             value = newProject.value.name,
             onValueChange = {
-                newProject.value.name = it.toString()
-                newProject.value = newProject.value
+                viewModel.onTriggerEvents(
+                    AddProjectEvents.UserInputChangerEvent(
+                        newProject.value.copy(
+                            name = it.toString()
+                        )
+                    )
+                )
             },
             keyboardType = KeyboardType.Text
         )
 
         ClickableText(
             text = AnnotatedString(
-                text = (newProject.value.projectStart ?: "Please enter end date"),
+                text = (newProject.value.projectStart ?: "Please select end date"),
                 spanStyles = listOf(
                     AnnotatedString.Range(
                         SpanStyle(color = MaterialTheme.colors.primary),
                         0,
-                        (newProject.value.projectStart ?: "Please enter end date").length
+                        (newProject.value.projectStart ?: "Please select end date").length
                     )
                 ),
             ),
@@ -80,8 +83,13 @@ fun AddProjectScreen(
             style = MaterialTheme.typography.button,
             onClick = {
                 showDateDialog(context) {
-                    newProject.value.projectStart = it
-                    newProject.value = newProject.value
+                    viewModel.onTriggerEvents(
+                        AddProjectEvents.UserInputChangerEvent(
+                            newProject.value.copy(
+                                projectStart = it
+                            )
+                        )
+                    )
                 }
             }
         )
@@ -104,8 +112,13 @@ fun AddProjectScreen(
 //            color = Color.White,
             onClick = {
                 showDateDialog(context) {
-                    newProject.value.projectEnd = it
-                    newProject.value = newProject.value
+                    viewModel.onTriggerEvents(
+                        AddProjectEvents.UserInputChangerEvent(
+                            newProject.value.copy(
+                                projectEnd = it
+                            )
+                        )
+                    )
                 }
             }
         )
@@ -114,8 +127,13 @@ fun AddProjectScreen(
             placeHolder = "Client Name",
             value = newProject.value.clientName,
             onValueChange = {
-                newProject.value.clientName = it.toString()
-                newProject.value = newProject.value
+                viewModel.onTriggerEvents(
+                    AddProjectEvents.UserInputChangerEvent(
+                        newProject.value.copy(
+                            clientName = it.toString()
+                        )
+                    )
+                )
             },
             keyboardType = KeyboardType.Text
 
@@ -127,9 +145,14 @@ fun AddProjectScreen(
             placeHolder = "Budget",
             value = (newProject.value.budget ?: "").toString(),
             onValueChange = {
-//                Log.e("BUDGET", it.toString())
-                newProject.value.budget = it.toString().toLongOrNull()
-                newProject.value = newProject.value
+                viewModel.onTriggerEvents(
+                    AddProjectEvents.UserInputChangerEvent(
+                        newProject.value.copy(
+                            budget = it.toString().toLongOrNull()
+                        )
+                    )
+                )
+
             },
             keyboardType = KeyboardType.Number
         )
@@ -138,8 +161,14 @@ fun AddProjectScreen(
             placeHolder = "Outsourcing Cost",
             value = (newProject.value.outsourcingBudget ?: "").toString(),
             onValueChange = {
-                newProject.value.outsourcingBudget = it.toString().toLongOrNull()
-                newProject.value = newProject.value
+                viewModel.onTriggerEvents(
+                    AddProjectEvents.UserInputChangerEvent(
+                        newProject.value.copy(
+                            outsourcingBudget = it.toString().toLongOrNull()
+                        )
+                    )
+                )
+
             },
             keyboardType = KeyboardType.Number
         )
@@ -148,15 +177,21 @@ fun AddProjectScreen(
             placeHolder = "Tip",
             value = (newProject.value.tip ?: "").toString(),
             onValueChange = {
-                newProject.value.tip = it.toString().toLongOrNull()
-                newProject.value = newProject.value
+                viewModel.onTriggerEvents(
+                    AddProjectEvents.UserInputChangerEvent(
+                        newProject.value.copy(
+                            tip = it.toString().toLongOrNull()
+                        )
+                    )
+                )
+
             },
             keyboardType = KeyboardType.Number
         )
 
         Button(
             onClick = {
-                viewModel.onAddProjectFinancials(newProject.value)
+                viewModel.onTriggerEvents(AddProjectEvents.AddProjectEvent)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -167,7 +202,10 @@ fun AddProjectScreen(
                 modifier = Modifier.padding(8.dp)
             )
         }
+
+        CircularIndeterminateProgressBar(isDisplayed = viewModel.loading.value)
     }
+
 
 }
 

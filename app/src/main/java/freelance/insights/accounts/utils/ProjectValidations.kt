@@ -10,7 +10,7 @@ fun validateProject(projectFinancials: ProjectFinancials): Either<ProjectFinanci
         Either.error("Please enter start date")
     } else if (projectFinancials.clientName.isBlank()) {
         Either.error("Please enter client name")
-    } else if (projectFinancials.budget != null && projectFinancials.budget!! > 0) {
+    } else if (projectFinancials.budget == null || projectFinancials.budget!! <= 0) {
         Either.error("Please enter budget")
     } else {
         Either.success(projectFinancials)
